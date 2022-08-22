@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.rafaelldi.lensplugin.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.rafaelldi.lensplugin.MyBundle
 
 class MyApplicationService {
 

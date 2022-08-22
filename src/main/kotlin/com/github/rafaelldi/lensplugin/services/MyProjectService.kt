@@ -1,7 +1,7 @@
-package org.jetbrains.plugins.template.services
+package com.github.rafaelldi.lensplugin.services
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.plugins.template.MyBundle
+import com.github.rafaelldi.lensplugin.MyBundle
 
 class MyProjectService(project: Project) {
 
