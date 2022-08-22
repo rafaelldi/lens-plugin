@@ -1,32 +1,39 @@
+import com.jetbrains.rd.generator.gradle.RdGenExtension
 import org.jetbrains.changelog.markdownToHTML
 
 fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
-    // Java support
     id("java")
-    // Kotlin support
     id("org.jetbrains.kotlin.jvm") version "1.7.10"
-    // Gradle IntelliJ Plugin
     id("org.jetbrains.intellij") version "1.8.0"
-    // Gradle Changelog Plugin
     id("org.jetbrains.changelog") version "1.3.1"
-    // Gradle Qodana Plugin
     id("org.jetbrains.qodana") version "0.1.13"
+    id("com.jetbrains.rdgen") version "2022.1.2"
 }
 
 group = properties("pluginGroup")
 version = properties("pluginVersion")
 
+val rdLibDirectory: () -> File = { file("${tasks.setupDependencies.get().idea.get().classes}/lib/rd") }
+extra["rdLibDirectory"] = rdLibDirectory
+
 // Configure project's dependencies
 repositories {
-    mavenCentral()
+    maven { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
 }
 
 // Set the JVM language level used to compile sources and generate files - Java 11 is required since 2020.3
 kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
+sourceSets {
+    main {
+        java.srcDir("src/rider/main/kotlin")
+        resources.srcDir("src/rider/main/resources")
     }
 }
 
@@ -55,8 +62,53 @@ qodana {
 }
 
 tasks {
+    val dotNetPluginId = properties("dotnetPluginId")
+    val buildConfiguration = properties("buildConfiguration")
+
+    configure<RdGenExtension> {
+        val modelDir = file("$projectDir/protocol/src/main/kotlin/model")
+        val csOutput = file("$projectDir/src/dotnet/$dotNetPluginId/Generated")
+        val ktOutput = file("$projectDir/src/rider/main/kotlin/com/github/rafaelldi/lensplugin/generated")
+
+        verbose = true
+        logger.info("Configuring rdgen params")
+        classpath({
+            "${rdLibDirectory()}/rider-model.jar"
+        })
+        sources("$modelDir/rider")
+        hashFolder = "$rootDir/build/rdgen/rider"
+        packages = "model.rider"
+
+        generator {
+            language = "kotlin"
+            transform = "asis"
+            root = "com.jetbrains.rider.model.nova.ide.IdeRoot"
+            directory = "$ktOutput"
+        }
+
+        generator {
+            language = "csharp"
+            transform = "reversed"
+            root = "com.jetbrains.rider.model.nova.ide.IdeRoot"
+            directory = "$csOutput"
+        }
+    }
+
     wrapper {
         gradleVersion = properties("gradleVersion")
+    }
+
+    val compileDotNet by registering {
+        doLast {
+            exec {
+                executable("dotnet")
+                args("build", "-c", buildConfiguration, "$dotNetPluginId.sln")
+            }
+        }
+    }
+
+    buildPlugin {
+        dependsOn(compileDotNet)
     }
 
     patchPluginXml {
@@ -85,6 +137,31 @@ tasks {
         })
     }
 
+    prepareSandbox {
+        dependsOn(compileDotNet)
+
+        val outputFolder = file("$projectDir/src/dotnet/$dotNetPluginId/bin/$dotNetPluginId/$buildConfiguration")
+        val dllFiles = listOf(
+            "$outputFolder/${dotNetPluginId}.dll",
+            "$outputFolder/${dotNetPluginId}.pdb"
+        )
+
+        for (f in dllFiles) {
+            from(f) { into("${rootProject.name}/dotnet") }
+        }
+
+        doLast {
+            for (f in dllFiles) {
+                val file = file(f)
+                if (!file.exists()) throw RuntimeException("File \"$file\" does not exist")
+            }
+        }
+    }
+
+    runPluginVerifier {
+        ideVersions.set(properties("pluginVerifierIdeVersions").split(',').map(String::trim).filter(String::isNotEmpty))
+    }
+
     // Configure UI tests plugin
     // Read more: https://github.com/JetBrains/intellij-ui-test-robot
     runIdeForUiTests {
@@ -92,6 +169,11 @@ tasks {
         systemProperty("ide.mac.message.dialogs.as.sheets", "false")
         systemProperty("jb.privacy.policy.text", "<!--999.999-->")
         systemProperty("jb.consents.confirmation.enabled", "false")
+    }
+
+    runIde {
+        dependsOn(compileDotNet)
+        maxHeapSize = "1500m"
     }
 
     signPlugin {

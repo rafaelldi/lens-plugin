@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lens-plugin", "src\dotnet\lens-plugin\lens-plugin.csproj", "{955CCDE5-7829-4575-A912-BB9C939AE479}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lens-plugin.tests", "src\dotnet\lens-plugin.tests\lens-plugin.tests.csproj", "{EF9896D0-8708-48C0-9488-39C1051453B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{4A9ABB95-3762-448B-B5BF-099E46DB22DE}"
+ProjectSection(SolutionItems) = preProject
+	src\dotnet\Plugin.props = src\dotnet\Plugin.props
+	README.md = README.md
+	CHANGELOG.md = CHANGELOG.md
+	src\rider\main\resources\META-INF\plugin.xml = src\rider\main\resources\META-INF\plugin.xml
+	gradle.properties = gradle.properties
+EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{955CCDE5-7829-4575-A912-BB9C939AE479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{955CCDE5-7829-4575-A912-BB9C939AE479}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{955CCDE5-7829-4575-A912-BB9C939AE479}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{955CCDE5-7829-4575-A912-BB9C939AE479}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9896D0-8708-48C0-9488-39C1051453B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9896D0-8708-48C0-9488-39C1051453B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9896D0-8708-48C0-9488-39C1051453B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9896D0-8708-48C0-9488-39C1051453B6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
