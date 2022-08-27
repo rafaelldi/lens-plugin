@@ -143,7 +143,8 @@ tasks {
         val outputFolder = file("$projectDir/src/dotnet/$dotNetPluginId/bin/$dotNetPluginId/$buildConfiguration")
         val dllFiles = listOf(
             "$outputFolder/${dotNetPluginId}.dll",
-            "$outputFolder/${dotNetPluginId}.pdb"
+            "$outputFolder/${dotNetPluginId}.pdb",
+            "$outputFolder/OpenTelemetry.Exporter.Rd.Model.dll"
         )
 
         for (f in dllFiles) {

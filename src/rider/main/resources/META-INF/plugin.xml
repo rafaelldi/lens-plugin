@@ -8,5 +8,13 @@
     <depends>com.intellij.modules.rider</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.github.rafaelldi.lensplugin.StartOpenTelemetryHostStartupActivity"/>
     </extensions>
+
+    <actions>
+        <action id="Lens.Actions.StartOpenTelemetryHost"
+                class="com.github.rafaelldi.lensplugin.actions.StartOpenTelemetryHostAction"
+                text="Start OpenTelemetry Host"
+                description="Start OpenTelemetry host"/>
+    </actions>
 </idea-plugin>
