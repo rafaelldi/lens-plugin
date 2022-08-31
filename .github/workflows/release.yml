@@ -30,6 +30,15 @@ jobs:
           distribution: zulu
           java-version: 11
 
+      # Setup .NET 6 environment for the next steps
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.x'
+
+      - name: Authenticate to GitHub Packages
+        run: dotnet nuget add source --username rafaelldi --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/rafaelldi/index.json"
+
       # Set environment variables
       - name: Export Properties
         id: properties

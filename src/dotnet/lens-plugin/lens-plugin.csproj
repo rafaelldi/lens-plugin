@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Rider.SDK" Version="$(SdkVersion)" />
-    <PackageReference Include="OpenTelemetry.Exporter.Rd.Model" Version="0.0.11" />
+    <PackageReference Include="OpenTelemetry.Exporter.Rd.Model" Version="0.1.1" />
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
